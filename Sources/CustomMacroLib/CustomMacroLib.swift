@@ -1,11 +1,5 @@
-// The Swift Programming Language
-// https://docs.swift.org/swift-book
+@attached(peer)
+public macro CodableKey(name: String) = #externalMacro(module: "CustomMacroLibMacros", type: "CodableKey")
 
-/// A macro that produces both a value and a string containing the
-/// source code that generated the value. For example,
-///
-///     #stringify(x + y)
-///
-/// produces a tuple `(x + y, "x + y")`.
-@freestanding(expression)
-public macro stringify<T>(_ value: T) -> (T, String) = #externalMacro(module: "CustomMacroLibMacros", type: "StringifyMacro")
+@attached(member, names: arbitrary)
+public macro CustomCodable() = #externalMacro(module: "CustomMacroLibMacros", type: "CustomCodable")

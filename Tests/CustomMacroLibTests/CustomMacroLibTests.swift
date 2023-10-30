@@ -7,36 +7,34 @@ import XCTest
 import CustomMacroLibMacros
 
 let testMacros: [String: Macro.Type] = [
-    "stringify": StringifyMacro.self,
+    "CodableKey": CodableKey.self,
+    "CustomCodable": CustomCodable.self
 ]
 #endif
 
-final class CustomMacroLibTests: XCTestCase {
+final class CustomCodableTests: XCTestCase {
     func testMacro() throws {
         #if canImport(CustomMacroLibMacros)
         assertMacroExpansion(
             """
-            #stringify(a + b)
+            @CustomCodable
+            struct Test: Codable {
+                @CodableKey(name="OtherName")
+                var propertyWithOtherName: String
+                var propertyWithSameName: String
+            }
             """,
             expandedSource: """
-            (a + b, "a + b")
+            struct Test: Codable {
+                var propertyWithOtherName: String
+                var propertyWithSameName: String
+            
+                enum CodingKeys: String, CodingKey {
+                    case propertyWithOtherName = "OtherName"
+                    case propertyWithSameName
+                }
+            }
             """,
-            macros: testMacros
-        )
-        #else
-        throw XCTSkip("macros are only supported when running tests for the host platform")
-        #endif
-    }
-
-    func testMacroWithStringLiteral() throws {
-        #if canImport(CustomMacroLibMacros)
-        assertMacroExpansion(
-            #"""
-            #stringify("Hello, \(name)")
-            """#,
-            expandedSource: #"""
-            ("Hello, \(name)", #""Hello, \(name)""#)
-            """#,
             macros: testMacros
         )
         #else

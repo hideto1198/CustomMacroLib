@@ -1,8 +1,9 @@
 import CustomMacroLib
 
-let a = 17
-let b = 25
+@CustomCodable
+struct Test {
+    @CodableKey(name: "OtherName")
+    var propertyWithOtherName: String
+    var propertyWithSameName: String
+}
 
-let (result, code) = #stringify(a + b)
-
-print("The value \(result) was produced by the code \"\(code)\"")
