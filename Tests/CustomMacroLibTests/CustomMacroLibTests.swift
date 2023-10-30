@@ -13,25 +13,29 @@ let testMacros: [String: Macro.Type] = [
 #endif
 
 final class CustomCodableTests: XCTestCase {
-    func testMacro() throws {
+    func testCodableKey() throws {
         #if canImport(CustomMacroLibMacros)
         assertMacroExpansion(
             """
             @CustomCodable
             struct Test: Codable {
-                @CodableKey(name="OtherName")
-                var propertyWithOtherName: String
+                @CodableKey(name="OtherName1")
+                var propertyWithOtherName1: String
                 var propertyWithSameName: String
+                @CodableKey(name="OtherName2")
+                var propertyWithOtherName2: String
             }
             """,
             expandedSource: """
             struct Test: Codable {
-                var propertyWithOtherName: String
+                var propertyWithOtherName1: String
                 var propertyWithSameName: String
+                var propertyWithOtherName2: String
             
                 enum CodingKeys: String, CodingKey {
-                    case propertyWithOtherName = "OtherName"
+                    case propertyWithOtherName1 = "OtherName1"
                     case propertyWithSameName
+                    case propertyWithOtherName2 = "OtherName2"
                 }
             }
             """,
