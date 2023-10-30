@@ -12,6 +12,7 @@ import SwiftSyntaxMacros
 struct CustomCodablePlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         CustomCodable.self,
-        CodableKey.self
+        CodableKey.self,
+        Base.self
     ]
 }
