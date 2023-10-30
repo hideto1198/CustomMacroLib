@@ -3,3 +3,6 @@ public macro CodableKey(name: String) = #externalMacro(module: "CustomMacroLibMa
 
 @attached(member, names: arbitrary)
 public macro CustomCodable() = #externalMacro(module: "CustomMacroLibMacros", type: "CustomCodable")
+
+@attached(member, names: arbitrary)
+public macro Base(propertyName: String) = #externalMacro(module: "CustomMacroLibMacros", type: "Base")
