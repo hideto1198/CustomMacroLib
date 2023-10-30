@@ -8,7 +8,8 @@ import CustomMacroLibMacros
 
 let testMacros: [String: Macro.Type] = [
     "CodableKey": CodableKey.self,
-    "CustomCodable": CustomCodable.self
+    "CustomCodable": CustomCodable.self,
+    "Base": Base.self
 ]
 #endif
 
@@ -44,5 +45,51 @@ final class CustomCodableTests: XCTestCase {
         #else
         throw XCTSkip("macros are only supported when running tests for the host platform")
         #endif
+    }
+    
+    func testBaseState() throws {
+        assertMacroExpansion(
+            """
+            @Base(propertyName: "base")
+            extension State {
+                var property3: String { return "" }
+                struct Base: Equatable {
+                    var property1: String
+                    var property2: Bool
+                }
+            
+                struct BaseFake: Equatable {
+                    var property4: Int
+                }
+            }
+            """,
+            expandedSource:
+            """
+            extension State {
+                var property3: String { return "" }
+                struct Base: Equatable {
+                    var property1: String
+                    var property2: Bool
+                }
+            
+                struct BaseFake: Equatable {
+                    var property4: Int
+                }
+            
+                var property1: String {
+                    get {
+                        base.property1
+                    }
+                    set {
+                        base.property1 = newValue
+                    }
+                }
+                var property2: Bool {
+                    get { base.property2 }
+                    set { base.property2 = newValue }
+                }
+            }
+            """,
+            macros: testMacros)
     }
 }
