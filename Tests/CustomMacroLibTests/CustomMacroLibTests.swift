@@ -19,16 +19,16 @@ final class CustomCodableTests: XCTestCase {
         assertMacroExpansion(
             """
             @CustomCodable
-            struct Test: Codable {
-                @CodableKey(name="OtherName1")
+            struct Test: Codable, Equatable {
+                @CodableKey(name: "OtherName1")
                 var propertyWithOtherName1: String
                 var propertyWithSameName: String
-                @CodableKey(name="OtherName2")
+                @CodableKey(name: "OtherName2")
                 var propertyWithOtherName2: String
             }
             """,
             expandedSource: """
-            struct Test: Codable {
+            struct Test: Codable, Equatable {
                 var propertyWithOtherName1: String
                 var propertyWithSameName: String
                 var propertyWithOtherName2: String
