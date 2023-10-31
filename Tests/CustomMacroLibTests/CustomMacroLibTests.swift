@@ -47,6 +47,36 @@ final class CustomCodableTests: XCTestCase {
 #endif
     }
     
+    func testCodableKeyFiailureNotInheritedCodable() throws {
+#if canImport(CustomMacroLibMacros)
+        assertMacroExpansion(
+            """
+            @CustomCodable
+            struct Test {
+                @CodableKey(name: "OtherName1")
+                var propertyWithOtherName1: String
+                var propertyWithSameName: String
+                @CodableKey(name: "OtherName2")
+                var propertyWithOtherName2: String
+            }
+            """,
+            expandedSource: """
+            struct Test {
+                var propertyWithOtherName1: String
+                var propertyWithSameName: String
+                var propertyWithOtherName2: String
+            }
+            """,
+            diagnostics: [
+                DiagnosticSpec(message: "message(\"Codableは必須です\")", line: 1, column: 1)
+            ],
+            macros: testMacros
+        )
+#else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+#endif
+    }
+    
     func testBaseState() throws {
 #if canImport(CustomMacroLibMacros)
         assertMacroExpansion(
