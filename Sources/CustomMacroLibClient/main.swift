@@ -1,21 +1,24 @@
 import CustomMacroLib
 
 @CustomCodable
-struct Test {
+struct Test: Codable, Equatable {
     @CodableKey(name: "OtherName")
     var propertyWithOtherName: String
     var propertyWithSameName: String
 }
 
-struct State: Equatable {
-    var base: Base
+struct Store {
+    struct State: Equatable {
+        var base: Base
+    }
 }
 
 @Base(propertyName: "base")
-extension State {
+extension Store.State {
     struct Base: Equatable {
         var property1: String
         var property2: Bool
         var property3: Int
     }
 }
+
