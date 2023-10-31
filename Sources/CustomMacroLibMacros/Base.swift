@@ -23,17 +23,15 @@ public struct Base: MemberMacro {
             guard member.decl.as(StructDeclSyntax.self)?.name.text == "Base" else { return nil }
             let members = member.decl.as(StructDeclSyntax.self)?.memberBlock.members.compactMap({ variableMember -> String? in
                 let bindingsFirst = variableMember.decl.as(VariableDeclSyntax.self)?.bindings.first
-                if let propertyName = bindingsFirst?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text,
-                   let propertyType = bindingsFirst?.typeAnnotation?.as(TypeAnnotationSyntax.self)?.type.as(IdentifierTypeSyntax.self)?.name.text {
-                    return """
-                    var \(propertyName): \(propertyType) {
-                        get { \(parentPropertyName).\(propertyName) }
-                        set { \(parentPropertyName).\(propertyName) = newValue }
-                    }
-                    """
-                } else {
-                    return nil
+                guard let propertyName = bindingsFirst?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text,
+                      let propertyType = bindingsFirst?.typeAnnotation?.as(TypeAnnotationSyntax.self)?.type.as(IdentifierTypeSyntax.self)?.name.text
+                else { return nil }
+                return """
+                var \(propertyName): \(propertyType) {
+                    get { \(parentPropertyName).\(propertyName) }
+                    set { \(parentPropertyName).\(propertyName) = newValue }
                 }
+                """
             }).joined(separator: "\n")
             return members
         })
