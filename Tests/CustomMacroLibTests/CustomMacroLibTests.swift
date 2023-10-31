@@ -15,7 +15,7 @@ let testMacros: [String: Macro.Type] = [
 
 final class CustomCodableTests: XCTestCase {
     func testCodableKey() throws {
-        #if canImport(CustomMacroLibMacros)
+#if canImport(CustomMacroLibMacros)
         assertMacroExpansion(
             """
             @CustomCodable
@@ -42,12 +42,13 @@ final class CustomCodableTests: XCTestCase {
             """,
             macros: testMacros
         )
-        #else
+#else
         throw XCTSkip("macros are only supported when running tests for the host platform")
-        #endif
+#endif
     }
     
     func testBaseState() throws {
+#if canImport(CustomMacroLibMacros)
         assertMacroExpansion(
             """
             @Base(propertyName: "base")
@@ -91,5 +92,69 @@ final class CustomCodableTests: XCTestCase {
             }
             """,
             macros: testMacros)
+#else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+#endif
+    }
+    // アンチパターン
+    func testBaseStateFailureOnStruct() throws {
+#if canImport(CustomMacroLibMacros)
+        assertMacroExpansion(
+            """
+            @Base(propertyName: "base")
+            struct State: Equatable {}
+            """,
+            expandedSource:
+            """
+            struct State: Equatable {}
+            """,
+            diagnostics: [
+                DiagnosticSpec(message: "message(\"このマクロはExtensionにのみ有効です\")", line: 1, column: 1)
+            ],
+            macros: testMacros)
+#else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+#endif
+    }
+    
+    func testBaseStateFailureOnOtherExtension() throws {
+#if canImport(CustomMacroLibMacros)
+        assertMacroExpansion(
+            """
+            @Base(propertyName: "base")
+            extension State.OtherState: Equatable {}
+            """,
+            expandedSource:
+            """
+            extension State.OtherState: Equatable {}
+            """,
+            diagnostics: [
+                DiagnosticSpec(message: "message(\"Stateの拡張でのみ使用可能です\")", line: 1, column: 1)
+            ],
+            macros: testMacros)
+#else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+#endif
+    }
+    
+    func testBaseStateFailureOnProperty() throws {
+#if canImport(CustomMacroLibMacros)
+        assertMacroExpansion(
+            """
+            extension State.OtherState: Equatable {
+                @Base(propertyName: "base")
+                var property: String
+            }
+            """,
+            expandedSource:
+            """
+            extension State.OtherState: Equatable {
+                var property: String
+            }
+            """,
+            macros: testMacros)
+#else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+#endif
     }
 }
