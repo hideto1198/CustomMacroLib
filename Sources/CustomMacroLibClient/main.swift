@@ -1,7 +1,7 @@
 import CustomMacroLib
 
 @CustomCodable
-struct Test {
+struct Test: Codable, Equatable {
     @CodableKey(name: "OtherName")
     var propertyWithOtherName: String
     var propertyWithSameName: String
