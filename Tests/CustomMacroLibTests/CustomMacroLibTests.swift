@@ -51,7 +51,7 @@ final class CustomCodableTests: XCTestCase {
         assertMacroExpansion(
             """
             @Base(propertyName: "base")
-            extension State {
+            extension Store.State {
                 var property3: String { return "" }
                 struct Base: Equatable {
                     var property1: String
@@ -65,7 +65,7 @@ final class CustomCodableTests: XCTestCase {
             """,
             expandedSource:
             """
-            extension State {
+            extension Store.State {
                 var property3: String { return "" }
                 struct Base: Equatable {
                     var property1: String
