@@ -106,3 +106,33 @@ extension Store.State {
 }
 */
 ```
+
+## DependencyClient
+TCAのDependencyValuesのextensionを自動生成します。
+
+before
+```swift
+struct SomeClient {}
+
+extension DependencyValues {
+    var someClient: SomeClient {
+        get { self[SomeClient.self] }
+        set { self[SomeClient.self] = newValue }
+    }
+}
+```
+
+after
+```swift
+@DependencyClient
+struct SomeClient {}
+
+/* expanded
+extension DependencyValues {
+    var someClient: SomeClient {
+        get { self[SomeClient.self] }
+        set { self[SomeClient.self] = newValue }
+    }
+}
+*/
+```
