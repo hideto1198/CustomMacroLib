@@ -13,6 +13,7 @@ struct CustomCodablePlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         CustomCodable.self,
         CodableKey.self,
-        Base.self
+        Base.self,
+        DependencyClient.self
     ]
 }

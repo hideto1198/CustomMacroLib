@@ -9,7 +9,8 @@ import CustomMacroLibMacros
 let testMacros: [String: Macro.Type] = [
     "CodableKey": CodableKey.self,
     "CustomCodable": CustomCodable.self,
-    "Base": Base.self
+    "Base": Base.self,
+    "DependencyClient": DependencyClient.self
 ]
 #endif
 
@@ -180,6 +181,53 @@ final class CustomCodableTests: XCTestCase {
             """
             extension State.OtherState: Equatable {
                 var property: String
+            }
+            """,
+            macros: testMacros)
+#else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+#endif
+    }
+
+    func testDependencyClient() throws {
+#if canImport(CustomMacroLibMacros)
+        assertMacroExpansion(
+            """
+            @DependencyClient
+            struct TestClient {
+            }
+            
+            @DependencyClient
+            struct TrackingClient {
+            }
+            """,
+            expandedSource:
+            """
+            struct TestClient {
+            }
+            
+            extension DependencyValues {
+                var testClient: TestClient {
+                    get {
+                        self [TestClient.self]
+                    }
+                    set {
+                        self [TestClient.self] = newValue
+                    }
+                }
+            }
+            struct TrackingClient {
+            }
+            
+            extension DependencyValues {
+                var trackingClient: TrackingClient {
+                    get {
+                        self [TrackingClient.self]
+                    }
+                    set {
+                        self [TrackingClient.self] = newValue
+                    }
+                }
             }
             """,
             macros: testMacros)

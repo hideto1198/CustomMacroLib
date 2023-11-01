@@ -6,3 +6,6 @@ public macro CustomCodable() = #externalMacro(module: "CustomMacroLibMacros", ty
 
 @attached(member, names: arbitrary)
 public macro Base(propertyName: String) = #externalMacro(module: "CustomMacroLibMacros", type: "Base")
+
+@attached(peer)
+public macro DependencyClient() = #externalMacro(module: "CustomMacroLibMacros", type: "DependencyClient")
