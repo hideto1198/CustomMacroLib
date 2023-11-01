@@ -21,10 +21,3 @@ extension Store.State {
         var property3: Int
     }
 }
-
-struct DependencyValues {}
-
-@DependencyClient
-struct TestClient {
-    
-}
