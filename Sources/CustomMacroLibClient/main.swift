@@ -22,3 +22,9 @@ extension Store.State {
     }
 }
 
+struct DependencyValues {}
+
+@DependencyClient
+struct TestClient {
+    
+}
