@@ -8,8 +8,8 @@
 import SwiftSyntax
 import SwiftSyntaxMacros
 
-public struct DependencyClient: PeerMacro {
-    public static func expansion(of node: AttributeSyntax, providingPeersOf declaration: some DeclSyntaxProtocol, in context: some MacroExpansionContext) throws -> [DeclSyntax] {
+public struct DependencyClient: ExtensionMacro {
+    public static func expansion(of node: AttributeSyntax, attachedTo declaration: some DeclGroupSyntax, providingExtensionsOf type: some TypeSyntaxProtocol, conformingTo protocols: [TypeSyntax], in context: some MacroExpansionContext) throws -> [ExtensionDeclSyntax] {
         guard let structDecl = declaration.as(StructDeclSyntax.self) else { throw CustomError.message("structにのみ使用可能です") }
         let propertyType = structDecl.name.text
         let propertyName = structDecl.name.text.camelCased
@@ -40,6 +40,6 @@ public struct DependencyClient: PeerMacro {
             extendedType: TypeSyntax("DependencyValues"),
             memberBlock: MemberBlockSyntax(members: members)
         )
-        return [DeclSyntax(result)]
+        return [result]
     }
 }
