@@ -21,3 +21,11 @@ extension Store.State {
         var property3: Int
     }
 }
+
+@DependencyClient
+struct TestClient: Equatable {
+    
+}
+
+let testClient = TestClient()
+print(testClient.test)

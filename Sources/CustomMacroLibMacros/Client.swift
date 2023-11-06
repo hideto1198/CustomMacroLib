@@ -1,19 +1,21 @@
 //
-//  File.swift
+//  Client.swift
 //  
 //
-//  Created by 東　秀斗 on 2023/11/01.
+//  Created by 東　秀斗 on 2023/11/05.
 //
 
 import SwiftSyntax
 import SwiftSyntaxMacros
 
-public struct DependencyClient: ExtensionMacro {
-    public static func expansion(of node: AttributeSyntax, attachedTo declaration: some DeclGroupSyntax, providingExtensionsOf type: some TypeSyntaxProtocol, conformingTo protocols: [TypeSyntax], in context: some MacroExpansionContext) throws -> [ExtensionDeclSyntax] {
-        guard let structDecl = declaration.as(StructDeclSyntax.self) else { throw CustomError.message("structにのみ使用可能です") }
-        let propertyType = structDecl.name.text
-        let propertyName = structDecl.name.text.camelCased
-        
+public struct Client: MemberMacro {
+    public static func expansion(of node: SwiftSyntax.AttributeSyntax, providingMembersOf declaration: some SwiftSyntax.DeclGroupSyntax, in context: some SwiftSyntaxMacros.MacroExpansionContext) throws -> [SwiftSyntax.DeclSyntax] {
+        guard let extensionDecl = declaration.as(ExtensionDeclSyntax.self) else { throw CustomError.message("only for extensions") }
+        guard let propertyType = extensionDecl.attributes.as(AttributeListSyntax.self)?.first?.as(AttributeSyntax.self)?.arguments?.as(LabeledExprListSyntax.self)?.first?.as(LabeledExprSyntax.self)?.expression.as(MemberAccessExprSyntax.self)?.base?.as(DeclReferenceExprSyntax.self)?.baseName.text
+        else {
+            throw CustomError.message("need a argument")
+        }
+        let propertyName = propertyType.camelCased
         let subscriptSyntax: SubscriptCallExprSyntax = SubscriptCallExprSyntax(calledExpression: DeclReferenceExprSyntax(baseName: .keyword(.self)),
                                                                                arguments:LabeledExprListSyntax([
                                                                                 LabeledExprSyntax(expression:
@@ -35,24 +37,11 @@ public struct DependencyClient: ExtensionMacro {
                                                         typeAnnotation: TypeAnnotationSyntax(type: TypeSyntax(stringLiteral: propertyType)),
                                                         accessorBlock: accessorBlock)
         let variableBuilder = VariableDeclSyntax(bindingSpecifier: .keyword(.var), bindings: .init([patternSyntax]))
-        let testBuilder = VariableDeclSyntax(bindingSpecifier: .keyword(.var), bindings: .init([
-            .init(pattern: PatternSyntax(stringLiteral: "test"),
-                  typeAnnotation: .init(type: IdentifierTypeSyntax(name: .identifier("String"))),
-                  accessorBlock: AccessorBlockSyntax(accessors: .getter(
-                    CodeBlockItemListSyntax() {
-                        CodeBlockItemSyntax(item: .stmt(.init(ReturnStmtSyntax(expression: StringLiteralExprSyntax(openingQuote: TokenSyntax(""),
-                                                                                                                   segments: StringLiteralSegmentListSyntax(arrayLiteral: .init(StringSegmentSyntax(content: TokenSyntax("\"hoge\"")))),
-                                                                                                                   closingQuote: TokenSyntax(""))))))
-                    }
-                  ))
-                  )
-        ]))
-//        let members = MemberBlockItemListSyntax([MemberBlockItemSyntax(decl: variableBuilder), MemberBlockItemSyntax(decl: testBuilder)])
-        let members = MemberBlockItemListSyntax([MemberBlockItemSyntax(decl: testBuilder)])
+        let members = MemberBlockItemListSyntax([MemberBlockItemSyntax(decl: variableBuilder)])
         let result = ExtensionDeclSyntax(
             extendedType: TypeSyntax(stringLiteral: propertyType),
             memberBlock: MemberBlockSyntax(members: members)
         )
-        return [result]
+        return [DeclSyntax(variableBuilder)]
     }
 }

@@ -9,3 +9,6 @@ public macro Base(propertyName: String) = #externalMacro(module: "CustomMacroLib
 
 @attached(extension, names: arbitrary)
 public macro DependencyClient() = #externalMacro(module: "CustomMacroLibMacros", type: "DependencyClient")
+
+@attached(member, names: arbitrary)
+public macro Client<T: Equatable>(type: T.Type) = #externalMacro(module: "CustomMacroLibMacros", type: "Client")

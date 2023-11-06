@@ -107,8 +107,9 @@ extension Store.State {
 */
 ```
 
-## DependencyClient
-TCAのDependencyValuesのextensionを自動生成します。
+## ~~DependencyClient~~
+
+~~TCAのDependencyValuesのextensionを自動生成します。~~
 
 before
 ```swift

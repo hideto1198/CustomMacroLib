@@ -14,6 +14,7 @@ struct CustomCodablePlugin: CompilerPlugin {
         CustomCodable.self,
         CodableKey.self,
         Base.self,
-        DependencyClient.self
+        DependencyClient.self,
+        Client.self
     ]
 }
